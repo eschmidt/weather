@@ -1,2 +1,172 @@
-<h1>Forecast#index</h1>
-<p>Find me in app/views/forecast/index.html.erb</p>
+<div class="container">
+  <%= form_with url: "/forecast", method: :get do |form| %>
+    <div class="form-group">
+      <br />
+      <input type="text" class="form-control" name="search" placeholder="Search City or Zip Code">
+    </div>
+  <% end %>
+
+  <hr />
+
+  <% if flash[:alert] %>
+    <div class="alert alert-warning"><%= flash[:alert] %></div>
+  <% else %>
+    <h3>
+      <%= @location.display_name[0] %><br />
+      as of <%= Time.at(@forecast.current_dt.to_i).to_datetime.in_time_zone(@forecast.timezone).strftime("%I:%M %p %Z") %>
+    </h3>
+    <br />
+    <% if @location.num_results > 1 %>
+      <h5>Did you mean... </h5>
+      <ul>
+        <% (1..[3, (@location.num_results-1)].min).each do |loc| %>
+          <li>
+            <a href="/forecast?search=<%= CGI.escape(@location.display_name[loc]) %>"><%= @location.display_name[loc] %></a>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    <div class="container border-primary mb-3">
+      <div class="row justify-content-around">
+        <div class="col-4">
+          <h1 class="display-1 mb-0"><%= @forecast.current_temp.round() %> &deg;</h1><br />
+          <h4 class="mb-0"><%= @forecast.current_weather_description %></h4><br />
+          <h4 class="mb-0">Day <%= @forecast.daily_temp_day.round() %>&deg; | Night <%= @forecast.daily_temp_night.round() %>&deg;</h4><br />
+        </div>
+        <div class="col-4">
+          <img src="https://openweathermap.org/img/wn/<%= @forecast.current_weather_icon %>@4x.png" alt="icon" /><br />
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-primary mb-3">
+      <div class="card-header">Today's Forecast</div>
+      <div class="card-body">
+        <div class="hstack">
+          <div class="container text-center">
+              Morning<br />
+              <%= @forecast.daily_temp_morn.round %> &deg;
+          </div>
+          <div class="vr"></div>
+          <div class="container text-center">
+            Afternoon<br />
+            <%= @forecast.daily_temp_day.round %> &deg;
+          </div>
+          <div class="vr"></div>
+          <div class="container text-center">
+            Evening<br />
+            <%= @forecast.daily_temp_eve.round %> &deg;
+          </div>
+          <div class="vr"></div>
+          <div class="container text-center">
+            Overnight<br />
+            <%= @forecast.daily_temp_night.round %> &deg;
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-primary mb-3">
+      <div class="card-header">Weather Today</div>
+      <div class="card-body">
+        <div class="row align-items-end">
+          <div class="col">
+            Feels Like<br />
+            <h4 class="display-4 mb-0"><%= @forecast.current_feels_like.round() %> &deg;</h4>
+          </div>
+          <div class="col text-end">
+            <img src="<%= asset_path('sunrise-fill.svg') %>" alt="sunrise" width="32" height="32" />
+            <%= Time.at(@forecast.daily_sunrise.to_i).to_datetime.strftime("%I:%M%p") %>
+            &nbsp;&nbsp;<div class="vr"></div>&nbsp;&nbsp;
+            <img src="<%= asset_path('sunset-fill.svg') %>" alt="sunset" width="32" height="32" />
+            <%= Time.at(@forecast.daily_sunset.to_i).to_datetime.strftime("%I:%M%p") %>
+          </div>
+        </div>
+        <p class="card-text"><%= @forecast.daily_summary %></p>
+        <hr />
+        <div class="row">
+          <div class="col">
+            <div class="container">
+              <div class="row border-bottom pb-3">
+                <div class="col">High / Low</div>
+                <div class="col text-end"><%= @forecast.daily[0][:temp][:max].round() %>&deg; / <%= @forecast.daily[0][:temp][:min].round() %>&deg;</div>
+              </div>
+              <div class="row border-bottom py-3">
+                <div class="col">Humidity</div>
+                <div class="col text-end"><%= @forecast.daily_humidity %> %</div>
+              </div>
+              <div class="row border-bottom py-3">
+                <div class="col">Pressure</div>
+                <div class="col text-end"><%= @forecast.daily_pressure %> hPa</div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="container">
+              <div class="row border-bottom pb-3">
+                <div class="col">Wind</div>
+                <div class="col text-end"><%= @forecast.daily_wind_speed %> mph</div>
+              </div>
+              <div class="row border-bottom py-3">
+                <div class="col">Dew Point</div>
+                <div class="col text-end"><%= @forecast.daily_dew_point %>&deg;</div>
+              </div>
+              <div class="row border-bottom py-3">
+                <div class="col">UV Index</div>
+                <div class="col text-end"><%= @forecast.daily_uvi.round %> of 11</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-primary mb-3">
+      <div class="card-header">Hourly Forecast</div>
+      <div class="card-body">
+        <div class="hstack">
+          <div class="container text-center">
+            <b>Now</b><br />
+            <span class="h3 text-primary"><%= @forecast.hourly[0][:temp].round %> &deg;</span><br />
+            <img src="https://openweathermap.org/img/wn/<%= @forecast.hourly[0][:weather_icon] %>@2x.png" alt="icon" />
+          </div>
+          <% (1..4).each do |hour_offset| %>
+            <div class="vr"></div>
+            <div class="container text-center">
+              <%= Time.at(@forecast.hourly[hour_offset][:dt].to_i).to_datetime.strftime("%I %p") %><br />
+              <span class="h3 text-primary"><%= @forecast.hourly[hour_offset][:temp].round %> &deg;</span><br />
+              <img src="https://openweathermap.org/img/wn/<%= @forecast.hourly[hour_offset][:weather_icon] %>@2x.png" alt="icon" />
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card border-primary mb-3">
+      <div class="card-header">Daily Forecast</div>
+      <div class="card-body">
+        <div class="hstack">
+          <div class="container text-center">
+            <b>Today</b><br />
+            <span class="text-primary">
+              <span class="h3"><%= @forecast.daily[0][:temp][:max].round %> &deg;</span><br />
+              <%= @forecast.daily[0][:temp][:min].round %> &deg;<br />
+            </span>
+            <img src="https://openweathermap.org/img/wn/<%= @forecast.daily[0][:weather_icon] %>@2x.png" alt="icon" />
+          </div>
+          <% (1..4).each do |hour_offset| %>
+            <div class="vr"></div>
+            <div class="container text-center">
+              <%= Time.at(@forecast.daily[hour_offset][:dt].to_i).to_datetime.strftime("%a %e") %><br />
+              <span class="text-primary">
+                <span class="h3"><%= @forecast.daily[hour_offset][:temp][:max].round %> &deg;</span><br />
+                <%= @forecast.daily[hour_offset][:temp][:min].round %> &deg;<br />
+              </span>
+              <img src="https://openweathermap.org/img/wn/<%= @forecast.daily[hour_offset][:weather_icon] %>@2x.png" alt="icon" />
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
