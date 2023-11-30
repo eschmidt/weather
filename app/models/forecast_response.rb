@@ -3,14 +3,16 @@
 class ForecastResponse
   include ActiveModel::API
 
-  attr_accessor :current_dt, :current_feels_like, :current_temp, :current_weather_description, :current_weather_icon,
-                :daily_dew_point, :daily_humidity, :daily_pressure, :daily_summary, :daily_sunrise, :daily_sunset,
-                :daily_temp_day, :daily_temp_eve, :daily_temp_morn, :daily_temp_night, :daily_uvi, :daily_wind_speed,
-                :daily, :hourly, :timezone
+  attr_accessor :cached, :current_dt, :current_feels_like, :current_temp, :current_weather_description,
+                :current_weather_icon, :daily_dew_point, :daily_humidity, :daily_pressure, :daily_summary,
+                :daily_sunrise, :daily_sunset, :daily_temp_day, :daily_temp_eve, :daily_temp_morn, :daily_temp_night,
+                :daily_uvi, :daily_wind_speed, :daily, :hourly, :timezone
 
-  def initialize(json_body)
+  def initialize(cached, json_body)
     # parse the response from the OpenWeather API
     # docs at https://openweathermap.org/api/one-call-3#data
+
+    @cached = cached
 
     @daily = [
       {
@@ -50,8 +52,6 @@ class ForecastResponse
         'weather_icon': ''
       }
     ]
-
-    pp @daily
 
     @hourly = [
       {

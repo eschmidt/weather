@@ -3,8 +3,7 @@
 Eric Schmidt
 <eric.purdue@gmail.com>
 
-
-To start web application:
+To start this application, run the following commands:
 ```
 $ export OPEN_WEATHER_API_KEY=<key>
 $ bin/rails server
@@ -15,19 +14,19 @@ Sign up for an OpenWeather API key here: https://home.openweathermap.org/api_key
 
 # Features
 
-* Accepts a wide variety of location formats. Try: `90210`, `Palo Alto`, or `Statue of Liberty`
+* Accepts a wide variety of location formats from all across the world. Try: `90210`, `Palo Alto`, or `Statue of Liberty`
 * If there are ambiguous results, displays up to three `Did you mean?` options (try `Paris` for example)
 * Graceful error handling for non-location input
-* TK: switch between hourly or daily forecast data
-* TK: fancy cards with weather icons
+* Current, Hourly, and Daily forecasts with lots of weather data
+* Data is cached as requested and I only store the data I used in the cache, not the entire huge response from the OpenWeather API
 
 # Front End
 
-I used bootstrap for a mobile-first approach with well known and easy to use components.
+I used bootstrap for a mobile-first approach with well known and easy to use components that can display nicely on any device.
 
-[TK] You can switch between hourly or daily forecasts using a bootstrap pill.
+I also made use of the weather icons from the OpenWeather API (and a few from bootstrap).
 
-[TK] Weather data is displayed pleasantly using cards and icons.
+![forecast.png](forecast.png)
 
 # Back End
 
@@ -55,8 +54,10 @@ Gems:
 
 `rspec spec`
 
-* Services (job queues, cache servers, search engines, etc.)
+I have a decent amount of tests, but there are more coming.
 
 * Deployment instructions
+
+This is currently only ready for local use. My most recent experience would have me build a docker image to deploy to an ECS container in AWS using CircleCi.
 
 * ...

@@ -14,6 +14,12 @@
     <h3>
       <%= @location.display_name[0] %><br />
       as of <%= Time.at(@forecast.current_dt.to_i).to_datetime.in_time_zone(@forecast.timezone).strftime("%I:%M %p %Z") %>
+      <% if @forecast.cached %>
+        <br /><br />
+        <div class="alert alert-success text-center" role="alert">
+          🤑 using cached response 🤑
+        </div>
+      <% end %>
     </h3>
     <br />
     <% if @location.num_results > 1 %>
