@@ -18,7 +18,7 @@ Sign up for an OpenWeather API key here: https://home.openweathermap.org/api_key
 * If there are ambiguous results, displays up to three `Did you mean?` options (try `Paris` for example)
 * Graceful error handling for non-location input
 * Current, Hourly, and Daily forecasts with lots of weather data
-* Data is cached as requested and I only store the data I used in the cache, not the entire huge response from the OpenWeather API
+* Data is cached as requested and I only store the data I need (`ForecastResponse`) in the cache, not the entire huge response from the OpenWeather API
 
 # Front End
 
