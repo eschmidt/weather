@@ -18,8 +18,7 @@ class Location
       @location = Geocoder.search(query)
     end
 
-    puts "DEBUG: Location data found:"
-    pp @location
+    Rails.logger.debug "Location data found: [#{@location.inspect}]"
 
     @num_results = @location.length
     if @num_results > 0
